@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 const BOARD_SIZE = 20;
 const CELL_SIZE = 25;
 const BORDER = 1;
+const BASE_SPEED = 1000;
 
 interface ISquare {
   x: number;
@@ -98,6 +99,7 @@ function App() {
   const [direction, setDirection] = useState<IDirection>(IDirection.Right);
   const [snake, setSnake] = useState<ISquare[]>([{ x: 0, y: 5 }]);
   const [treat, setTreat] = useState<ISquare>({ x: 0, y: 10 });
+  const [speedDivider, setSpeedDivider] = useState(1);
   const [isDead, setIsDead] = useState<boolean>(false);
   const boardRef = useRef<ISquare[][] | null>(null);
 
@@ -125,7 +127,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setTimeout(move, 50);
+    const speed = BASE_SPEED / speedDivider;
+    setTimeout(move, speed);
   }, [snake]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (boardRef.current === null) {
@@ -179,6 +182,28 @@ function App() {
             />
           ))
         )}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: 200,
+          alignItems: "center",
+        }}
+      >
+        <button
+          style={{ height: CELL_SIZE, width: 200 }}
+          onClick={() => setSpeedDivider((s) => s + 1)}
+        >
+          Faster
+        </button>
+        {speedDivider}
+        <button
+          style={{ height: CELL_SIZE, width: 200 }}
+          onClick={() => setSpeedDivider((s) => s - 1)}
+        >
+          Slower
+        </button>
       </div>
       {isDead && (
         <div>
